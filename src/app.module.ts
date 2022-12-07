@@ -7,6 +7,7 @@ import { DeploymentStateModule } from './deployment-state/deployment-state.modul
 import { ArchitecturesModule } from './architectures/architectures.module';
 import { CountAwsModule } from './count-aws/count-aws.module';
 import { TeamSlugModule } from './team-slug/team-slug.module';
+import { PriceModule } from './price/price.module';
 import configuration from './share/config/config';
 
 @Module({
@@ -20,6 +21,7 @@ import configuration from './share/config/config';
     ArchitecturesModule,
     CountAwsModule,
     TeamSlugModule,
+    PriceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
