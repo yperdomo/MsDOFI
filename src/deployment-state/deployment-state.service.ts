@@ -1,51 +1,75 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { ConfigService, ConfigType } from '@nestjs/config';
+import config from 'src/share/config/config';
 import { CreateDeploymentStateDto } from './dto/create-deployment-state.dto';
 import { UpdateDeploymentStateDto } from './dto/update-deployment-state.dto';
 
 @Injectable()
 export class DeploymentStateService {
-  
-  getLastBuild(){
+
+  constructor(
+    @Inject(config.KEY) private configService: ConfigType<typeof config>
+  ){}
+
+  async getInfoBuild(build:number):Promise<CreateDeploymentStateDto>{
     var qs=require('qs')
     var data=qs.stringify({'BranchName':'origin/main'})
-    var axios = require('axios');
-    var log=0;
+    var axios = require(this.configService.AXIOS);
+    let deploymentState=new CreateDeploymentStateDto()
+    var  config={
+      method:'get',
+      url: this.configService.BASEURLJENKINS+ build +this.configService.INFOBUILDJENKINS,
+      Headers:{
+        'Authorization': this.configService.TOKENJENKIN
+      },
+      data:data
+    };
+    await axios(config)
+    .then(function(response){
+      JSON.stringify(response.data)
+      deploymentState.name = response.data.fullDisplayName
+      deploymentState.error = false
+      if(response.data.build==false){
+        deploymentState.state=`Pendiente`
+      }if (response.data.build==true) {
+        deploymentState.state=`Proceso`
+      }   
+      if (response.data.result==`SUCCESS`) {
+        deploymentState.state=`Finalizado`
+      } else {
+        deploymentState.state=`Ejecucion`
+        if(response.data.result==`FAILURE`){
+          deploymentState.state = `Finalizado`
+          deploymentState.error = true
+        }
+        
+      }
+    })
+    .catch(function(error){
+      console.log(error)
+    })
+    return deploymentState
+  }
+  
+  async getLastBuild(){
+    var axios = require(this.configService.AXIOS);
+    var log:number;
     var config = {
     method: 'get',
-    url: 'http://192.168.100.158:9090/job/notificacion-slack/api/json?pretty=true',
+    url: this.configService.BASEURLJENKINS+this.configService.INFOBUILDJENKINS,
     headers: { 
-        'Authorization': 'Bearer 11ac77383751eeaf6f9789a4939e635989', 
-        'Cookie': 'JSESSIONID.aea1b42f=node01klegwqu7dtwshvkf6v9jgfwy56.node0'
+        'Authorization': this.configService.TOKENJENKIN
     }
     };
     
-    axios(config)
+    await axios(config)
     .then(function (response) {
-      var LastBuild=response.data.lastBuild.number
-      var config2={
-        method:'get',
-        url:`http://192.168.100.158:9090/job/notificacion-slack/${LastBuild}/api/json?pretty=true`,
-        Headers:{
-          'Authorization':'Basic 11ac77383751eeaf6f9789a4939e635989',
-          'Content-Type':'application/x-www-form-urlencoded'
-        },
-        data:data
-      };
-      axios(config2)
-      .then(function(response){
-        //console.log(JSON.stringify(response.data))
-        JSON.stringify(response.data)
-        console.log(response.data)
-        //console.log(response.data.building)
-      })
-      .catch(function(error){
-        console.log(error)
-      })
-      log=response.data.lastBuild.number*1
-    })
+      log= response.data.lastBuild.number
+    },
+    )
     .catch(function (error) {
       console.log(error);
-    });
-    return log
+    });  
+    return  log
   }
 }

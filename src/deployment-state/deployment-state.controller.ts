@@ -8,8 +8,10 @@ export class DeploymentStateController {
   constructor(private readonly deploymentStateService: DeploymentStateService) {}
 
   @Get()
-  findAll() {
-    return this.deploymentStateService.getLastBuild();
+  async findAll() {
+     let numero= await this.deploymentStateService.getLastBuild()
+     await this.deploymentStateService.getInfoBuild(numero)
+    return await this.deploymentStateService.getInfoBuild(numero)
   }
 
 }

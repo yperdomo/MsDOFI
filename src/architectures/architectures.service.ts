@@ -12,9 +12,9 @@ export class ArchitecturesService {
   }
 
   findAll(): CreateArchitectureDto[] {
-    var architecturesMapper= new ArchitecturesMapper()
-    var architectures= new Architecture()
-    var architectureDTOs: CreateArchitectureDto[] = [];
+    const architecturesMapper= new ArchitecturesMapper()
+    let architectures= new Architecture()
+    let architectureDTOs: CreateArchitectureDto[] = [];
     for(let i = 0; i < 3; i++){
       architectures.type=`arquitectura ${i}`
       architectures.total_cost=700+i

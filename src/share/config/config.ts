@@ -5,4 +5,7 @@ export default registerAs('configuration', () => ({
   URLJOBJENKINS: process.env.URLJOBJENKINS,
   USERJENKINS: process.env.USERJENKINS,
   TOKENJENKIN: process.env.TOKENJENKIN,
+  BASEURLJENKINS: process.env.BASEURLJENKINS,
+  INFOBUILDJENKINS: process.env.INFOBUILDJENKINS,
+  AXIOS: process.env.AXIOS
 }));

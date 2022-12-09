@@ -11,9 +11,9 @@ export class CountAwsService {
   }
 
   findAll():CountAw[] {
-    var count=new CountAw()
-    var countAWSMapper =new CountAWSMapper()
-    var counts: CountAw[] = [];
+    let count=new CountAw()
+    const countAWSMapper =new CountAWSMapper()
+    let counts: CountAw[] = [];
 
     for(let i = 0; i < 3; i++){
       count.cost=1000

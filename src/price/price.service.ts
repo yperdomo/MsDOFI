@@ -11,9 +11,9 @@ export class PriceService {
   }
 
   findAll() {
-    var priceMapper = new PriceMapper()
-    var price = new Price()
-    var prices: CreatePriceDto[] = [];
+    const priceMapper = new PriceMapper()
+    let price = new Price()
+    let prices: CreatePriceDto[] = [];
 
     for(let i = 0; i < 3; i++){
       price.descripcion=`hola`
