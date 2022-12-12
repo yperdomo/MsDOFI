@@ -1,7 +1,8 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigType } from '@nestjs/config';
-import config from './share/config/config';
+import { RequestDTO } from '../share/domain/request.dto';
+import config from '../share/config/config';
 import { lastValueFrom } from 'rxjs';
 import { Console, log } from 'console';
 
@@ -12,8 +13,10 @@ export class AppService {
     private httpService: HttpService,
   ) {}
 
-  async getHello(): Promise<string> {
+  async getHello(requestDTO: RequestDTO){
     try {
+      const URL = this.configService.URLJOBJENKINS+requestDTO.jobname+this.configService.URLCOMPLEMENT;
+
       const data = {
         BranchName: 'origin/main',
       };
@@ -22,11 +25,8 @@ export class AppService {
         Authorization: 'Basic' + this.configService.TOKENJENKIN,
         'Content-Type': 'application/x-www-form-urlencoded',
       };
-      console.log(
-        'Inicio de consumo: ' + this.configService.URLJOBJENKINS + data,
-      );
       const resposeJenkins = await lastValueFrom(
-        this.httpService.post(this.configService.URLJOBJENKINS, data, {
+        this.httpService.post(URL, data, {
           headers,
         }),
       );
